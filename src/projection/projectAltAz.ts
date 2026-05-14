@@ -1,6 +1,6 @@
 // src/projection/projectAltAz.ts
-import { CelestialBody } from '../astronomy/objectTypes';
-import { applyAspectCorrection } from './aspectCorrection';
+import type { CelestialBody } from '../astronomy/objectTypes.js';
+import { applyAspectCorrection } from './aspectCorrection.js';
 
 export type ScreenPoint = {
   id: string;

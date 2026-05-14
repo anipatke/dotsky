@@ -1,5 +1,5 @@
 // src/render/asciiGrid.ts
-import { CelestialBodyType } from '../astronomy/objectTypes';
+import type { CelestialBodyType } from '../astronomy/objectTypes.js';
 
 export function getSymbolForBody(type: CelestialBodyType, magnitude?: number): string {
   switch (type) {

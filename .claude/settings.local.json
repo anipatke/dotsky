@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__backlog__get_backlog_instructions",
+      "mcp__backlog__task_create",
+      "Bash(npm install *)",
+      "Bash(npx vitest *)",
+      "Bash(node -e \"import\\('ink'\\).then\\(m => { const r = m.render; console.log\\(typeof r\\); }\\)\")",
+      "mcp__backlog__task_edit"
+    ]
+  }
+}

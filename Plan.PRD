@@ -1,0 +1,108 @@
+# Astrolink Implementation Plan - Phase 2 (UI & CLI)
+
+## Progress Summary: Phase 1 (Foundation) - COMPLETE
+We have successfully implemented the core mathematical and data layers of Astrolink using Strict TDD and Architecture-driven development.
+
+- **Task 1: Foundation Types & Astronomy Math**
+  - Defined `CelestialBody` and `CelestialBodyType`.
+  - Created `skyModel.ts` for celestial calculations.
+  - Verified with 100% test pass rate.
+- **Task 2: Projection Math**
+  - Implemented `projectAltAz.ts` for screen mapping.
+  - Implemented `aspectCorrection.ts` for terminal character ratios.
+  - Verified visibility and projection logic with tests.
+- **Task 3: Location Resolution Service**
+  - Created `resolveLocation.ts` prioritizing CLI input over fallback (Sydney).
+  - Verified priority logic and default handling.
+- **Task 4: UI ASCII Rendering**
+  - Implemented `getSymbolForBody` in `asciiGrid.ts`.
+  - Mapped celestial types and magnitudes to terminal symbols (☉, ◐, *, +, .).
+
+---
+
+## Roadmap: Phase 2 (UI & CLI Infrastructure)
+
+### Task 5: Terminal Infrastructure
+**Goal:** Implement full-screen entry/exit and resize listeners.
+- **Files:** `src/terminal/screen.ts`, `src/terminal/resize.ts`
+- [ ] Implement alternate screen buffer entry using `ansi-escapes`.
+- [ ] Implement resize debouncing (16-50ms).
+- [ ] Create failing tests for screen restoration logic.
+
+### Task 6: Reactive UI Components (Dumb Components)
+**Goal:** Build the visual layout parts using Ink.
+- **Files:** `src/ui/Header.tsx`, `src/ui/Footer.tsx`, `src/ui/Horizon.tsx`
+- [ ] Implement `Header` (Title, Lat/Lon display).
+- [ ] Implement `Footer` (Keybinding hints).
+- [ ] Implement `Horizon` (N, E, S, W markers).
+- [ ] Verified with `ink-testing-library`.
+
+### Task 7: The Viewport Component
+**Goal:** Render the projected sky grid.
+- **Files:** `src/ui/Viewport.tsx`
+- [ ] Map `ScreenPoint[]` to the terminal grid.
+- [ ] Handle star density and label collisions.
+- [ ] Test viewport boundaries.
+
+### Task 8: App State & Keyboard Hooks
+**Goal:** Implement the central control loop and user input.
+- **Files:** `src/App.tsx`
+- [ ] Implement `AppState` (Time, Zoom, AzimuthOffset).
+- [ ] Bind keyboard keys: `q` (Quit), `l` (Labels), `+/-` (Zoom), `←/→` (Rotate).
+- [ ] Implement the render tick loop (capped at 15 FPS).
+
+### Task 9: CLI Entry Point
+**Goal:** Connect the terminal to the logic.
+- **Files:** `src/cli.ts`
+- [ ] Parse arguments with `meow`.
+- [ ] Resolve location before mounting the React tree.
+- [ ] Handle graceful shutdown on `SIGINT`/`SIGTERM`.
+
+---
+
+## Testing Strategy
+- **Unit Tests:** All infra logic (resize, argument parsing).
+- **Integration Tests:** App mount/unmount and keyboard state transitions.
+- **Validation:** Final check against PRD 1.1.0 requirements.
+
+---
+
+## Roadmap: Phase 3 (Real Sky Data & Location)
+
+### Task 10: astronomy-engine Integration
+**Goal:** Replace the hardcoded Sun stub with real celestial calculations.
+- **File:** `src/astronomy/skyModel.ts`
+- [ ] Compute Sun position using `astronomy-engine` `SunPosition` / `Equator` + `Horizon`.
+- [ ] Compute Moon position using `GeoMoon` + `Horizon`.
+- [ ] Compute visible planets: Mercury, Venus, Mars, Jupiter, Saturn using `GeoVector` + `Horizon`.
+- [ ] Include bright named stars (Sirius, Canopus, Arcturus, Vega, Capella, Rigel, Procyon, Achernar, Betelgeuse, Hadar) using `StarPosition` or fixed ICRS coords + `Horizon`.
+- [ ] Filter bodies with `altitude < -18°` (astronomical twilight cutoff) before returning.
+- [ ] Assign correct magnitudes to all bodies.
+- [ ] All existing tests continue to pass; add unit tests for each body type.
+
+### Task 11: Location Cache & IP Geolocation
+**Goal:** Complete the location resolution pipeline per spec §4.
+- **Files:** `src/location/resolveLocation.ts`, `src/location/cacheLocation.ts`
+- [ ] Implement `cacheLocation.ts`: read/write lat+lon to a JSON file in `~/.astrolink/cache.json`.
+- [ ] Implement IP geolocation via `https://ipapi.co/json/` (no API key required, free tier).
+- [ ] Wire priority: CLI → cache → geo → fallback in `resolveLocation.ts`.
+- [ ] On successful geo lookup, write result to cache.
+- [ ] On geo failure, show footer warning "Location fallback: Sydney".
+- [ ] Respect `--no-geo` flag (skip IP lookup entirely).
+- [ ] Unit tests for each priority branch.
+
+### Task 12: Unicode Safety & Min Terminal Guard
+**Goal:** Graceful degradation for hostile environments.
+- **Files:** `src/render/asciiGrid.ts`, `src/App.tsx`
+- [ ] Detect Unicode support: check `process.env.LANG` / `process.env.TERM` for UTF-8, or probe stdout with a test write.
+- [ ] If Unicode unavailable, fall back: `☉→O`, `◐→o`, symbols stay `* + .`.
+- [ ] In `App.tsx`, if `dimensions.width < 80 || dimensions.height < 24`, render a single warning line instead of the sky view.
+- [ ] Warning clears automatically when terminal is resized back to minimum.
+- [ ] Tests for ASCII fallback symbol mapping and small-terminal guard.
+
+---
+
+## Phase 3 Testing Strategy
+- **Unit Tests:** skyModel bodies (Sun, Moon, each planet, sample stars), location priority branches, ASCII fallback map.
+- **Integration Tests:** Full location resolution chain (mock fetch), terminal resize below minimum.
+- **Validation:** Visual spot-check against a known planetarium (Stellarium) for ≥3 bodies at a known time/location.

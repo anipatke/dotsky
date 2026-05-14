@@ -1,5 +1,5 @@
 // src/astronomy/skyModel.ts
-import { CelestialBody } from './objectTypes';
+import type { CelestialBody } from './objectTypes.js';
 
 export type SkyModelInput = {
   time: Date;

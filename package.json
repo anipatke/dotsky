@@ -1,25 +1,34 @@
 {
   "name": "astrolink",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Full-screen terminal planetarium",
+  "main": "./dist/cli.js",
+  "bin": {
+    "astrolink": "./dist/cli.js"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "build": "tsc",
+    "dev": "tsx src/cli.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "dependencies": {
     "ansi-escapes": "^7.3.0",
     "astronomy-engine": "^2.1.19",
     "ink": "^7.0.1",
     "meow": "^14.1.0",
-    "react": "^19.2.5"
+    "react": "^19.2.5",
+    "savepoint": "^1.2.6"
   },
   "devDependencies": {
     "@types/node": "^25.6.0",
     "@types/react": "^19.2.14",
+    "ink-testing-library": "^4.0.0",
+    "tsx": "^4.21.0",
     "typescript": "^6.0.3",
     "vitest": "^4.1.5"
   }
