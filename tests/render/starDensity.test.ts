@@ -20,12 +20,12 @@ describe('applyStarDensity', () => {
     expect(result[0].type).toBe('moon');
   });
 
-  it('sorts by priority: sun < moon < planet < star', () => {
+  it('sorts by priority: planet < moon < sun < star', () => {
     const points = [pt('star', 2), pt('sun'), pt('planet'), pt('moon')];
     const result = applyStarDensity(points, 80, 24);
-    expect(result[0].type).toBe('sun');
+    expect(result[0].type).toBe('planet');
     expect(result[1].type).toBe('moon');
-    expect(result[2].type).toBe('planet');
+    expect(result[2].type).toBe('sun');
     expect(result[3].type).toBe('star');
   });
 

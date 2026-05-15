@@ -1,6 +1,6 @@
 ---
 id: E03-tui-core/T001-app-state-and-render-loop
-status: planned
+status: done
 objective: Replace stub App with full state management and FPS-capped render loop
 depends_on: []
 complexity_tier: high

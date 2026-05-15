@@ -1,6 +1,6 @@
 ---
 id: E04-polish-and-robustness/T002-projection-offset-zoom-aspect
-status: planned
+status: done
 objective: Apply azimuth offset, zoom, and proper aspect correction in projection
 depends_on: []
 complexity_tier: medium
@@ -38,4 +38,19 @@ complexity_reason: Core math changes in projection with potential rendering ripp
 
 ## Context Log
 
-Pending.
+Files read:
+- `src/projection/projectAltAz.ts`
+- `src/projection/aspectCorrection.ts`
+- `tests/projection/projectAltAz.test.ts`
+- `engineeringspec.md` (§7 Projection Rules, §8 Terminal Aspect Correction)
+- `.savepoint/releases/v1/epics/E04-polish-and-robustness/E04-Detail.md`
+
+Files edited:
+- `src/projection/projectAltAz.ts` — fixed aspect to apply before floor (no double floor), centered aspect correction applied after zoom, added viewport bounds check for `visible`, exported `ProjectionFunction` type for swappable projections
+- `tests/projection/projectAltAz.test.ts` — added `viewport bounds` describe block with tests for in-bounds visible, zoom-push invisible, below-horizon invisible
+
+Quality gates: `npx vitest run` → 19 passed, 140 tests. `npx tsc --noEmit` → no errors.
+
+## Drift Notes
+
+None. Changes stay within `projectAltAz.ts` (projection module) and its test file, per Codebase Map and E04-Detail design.

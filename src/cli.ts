@@ -4,6 +4,8 @@ import { render } from 'ink';
 import { createElement } from 'react';
 import { resolveLocation } from './location/resolveLocation.js';
 import App, { type AppProps } from './App.js';
+import { validateFlags } from './cli/validateFlags.js';
+import { removeAllResizeListeners } from './terminal/resize.js';
 
 const cli = meow(
   `
@@ -36,20 +38,16 @@ const cli = meow(
   },
 );
 
-const { lat, lon, time: timeStr, aspect, fps, labels } = cli.flags;
+const { lat, lon, geo, time: timeStr, aspect, fps, labels } = cli.flags;
 
-if ((lat !== undefined) !== (lon !== undefined)) {
-  console.error('Error: --lat and --lon must be provided together.');
-  process.exit(1);
-}
-
-if ((lat !== undefined && isNaN(lat)) || (lon !== undefined && isNaN(lon))) {
-  console.error('Error: --lat and --lon must be valid numbers.');
+const error = validateFlags({ lat, lon, time: timeStr, fps, aspect });
+if (error) {
+  console.error(`Error: ${error}`);
   process.exit(1);
 }
 
 const initialTime = timeStr ? new Date(timeStr) : undefined;
-const location = await resolveLocation({ lat, lon });
+const location = await resolveLocation({ lat, lon, noGeo: !geo });
 
 // Ink owns the full terminal lifecycle via alternateScreen + exitOnCtrlC.
 // Do NOT call enterScreen()/exitScreen() manually — that conflicts with Ink's
@@ -76,6 +74,7 @@ const { waitUntilExit } = render(
 );
 
 process.on('SIGTERM', () => process.exit(0));
+process.on('exit', removeAllResizeListeners);
 
 await waitUntilExit();
 process.exit(0);

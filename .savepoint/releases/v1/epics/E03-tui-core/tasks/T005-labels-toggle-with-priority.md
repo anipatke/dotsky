@@ -1,6 +1,6 @@
 ---
 id: E03-tui-core/T005-labels-toggle-with-priority
-status: planned
+status: done
 objective: Wire labels toggle (l key) with priority-based collision avoidance
 depends_on: ["E03-tui-core/T001-app-state-and-render-loop"]
 complexity_tier: low
@@ -37,4 +37,10 @@ Labels are disabled by default with no toggle. The `l` key should toggle labels 
 
 ## Context Log
 
-Pending.
+- **Read**: `src/App.tsx`, `src/render/labelLayout.ts`, `src/render/starDensity.ts`, `src/ui/Viewport.tsx`, `src/projection/projectAltAz.ts`, `src/terminal/input.ts`, `src/astronomy/objectTypes.ts`, `src/cli.ts`, `tests/App.test.tsx`, `tests/render/labelLayout.test.ts`, `tests/ui/Viewport.test.tsx`
+- **Edited**: `src/App.tsx` — wired `assignLabels()` into render loop, added `labeledPoints` state, passed labels to Viewport
+- **Edited**: `src/ui/Viewport.tsx` — added `labeledPoints`/`labelsEnabled` props, renders label text when enabled
+- **Edited**: `tests/render/labelLayout.test.ts` — added priority-order test
+- **Edited**: `tests/ui/Viewport.test.tsx` — added labels enabled/disabled rendering tests
+- **Edited**: `tests/App.test.tsx` — added `l` key toggle test
+- **Quality gates**: `npx vitest run` → 125/125 passed (19 files), `npx tsc --noEmit` → clean

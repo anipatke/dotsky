@@ -15,11 +15,11 @@ Read `.savepoint/PRD.md` only for vision changes. Read `.savepoint/Design.md` on
 ## Current state
 
 ```yaml
-state: epic-design
+state: pre-implementation
 release: v1
-epic: E04
-task: none
-next_action: Design E01-astronomy-engine epic detail before breaking down tasks. Detail file already exists — proceed to task breakdown or start building.
+epic:
+task:
+next_action: Review v1 release status and decide release handoff.
 ```
 
 ## Skill Activation

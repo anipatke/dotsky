@@ -1,6 +1,6 @@
 ---
 id: E04-polish-and-robustness/T003-unicode-ascii-fallback
-status: planned
+status: done
 objective: Detect Unicode support and fall back to ASCII symbols when unavailable
 depends_on: []
 complexity_tier: low
@@ -35,4 +35,8 @@ complexity_reason: Single-module change to asciiGrid with straightforward detect
 
 ## Context Log
 
-Pending.
+- Read: src/render/asciiGrid.ts, tests/render/asciiGrid.test.ts, src/ui/Viewport.tsx, src/App.tsx, E04-Detail.md
+- Edited: src/render/asciiGrid.ts (added detectUnicodeSupport, unicode param, ASCII fallback map)
+- Edited: src/App.tsx (import detectUnicodeSupport, pass flag to getSymbolForBody)
+- Edited: tests/render/asciiGrid.test.ts (added ASCII-mode tests, detectUnicodeSupport tests)
+- Quality gates: vitest run — 153/153 passed; tsc --noEmit — clean

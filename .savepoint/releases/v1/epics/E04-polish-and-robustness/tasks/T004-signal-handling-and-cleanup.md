@@ -1,6 +1,6 @@
 ---
 id: E04-polish-and-robustness/T004-signal-handling-and-cleanup
-status: planned
+status: done
 objective: Graceful SIGINT/SIGTERM handling and listener cleanup on exit
 depends_on: []
 complexity_tier: low
@@ -33,4 +33,10 @@ Per spec §2, exit must restore terminal state and clean listeners. Current code
 
 ## Context Log
 
-Pending.
+Files read: src/cli.ts, src/terminal/resize.ts, src/App.tsx, tests/terminal/resize.test.ts, tests/App.test.tsx
+Files edited: src/cli.ts (import + process.on('exit', removeAllResizeListeners)), src/App.tsx (import + cleanup useEffect)
+Files created: tests/terminal/signal-cleanup.test.ts
+
+Quality gates:
+- `npx tsc --noEmit`: passes
+- `npx vitest run`: 20 files, 156 tests passed

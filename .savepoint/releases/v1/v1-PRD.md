@@ -14,10 +14,10 @@ Ship a full-screen terminal planetarium that renders the live night sky from any
 
 | # | Epic | Status |
 |---|------|--------|
-| E01 | astronomy-engine | planned |
-| E02 | location-and-cli | planned |
+| E01 | astronomy-engine | audited |
+| E02 | location-and-cli | audited |
 | E03 | tui-core | planned |
-| E04 | polish-and-robustness | planned |
+| E04 | polish-and-robustness | audited |
 
 ## Epic summaries
 

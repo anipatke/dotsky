@@ -1,6 +1,6 @@
 import type { ScreenPoint } from '../projection/projectAltAz.js';
 
-const PRIORITY: Record<string, number> = { sun: 0, moon: 1, planet: 2, star: 3 };
+const PRIORITY: Record<string, number> = { planet: 0, moon: 1, sun: 2, star: 3 };
 
 export function applyStarDensity(
   points: ScreenPoint[],

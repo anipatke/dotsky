@@ -1,6 +1,6 @@
 ---
 id: E03-tui-core/T004-zoom-and-azimuth-rotation
-status: planned
+status: done
 objective: Implement zoom and azimuth rotation controls that affect projection output
 depends_on: ["E03-tui-core/T001-app-state-and-render-loop"]
 complexity_tier: medium
@@ -36,4 +36,17 @@ No zoom or azimuth rotation controls exist. The spec requires `+`/`-` for zoom a
 
 ## Context Log
 
-Pending.
+Files read:
+- `src/App.tsx` — state already had zoom/azimuthOffset, key handling already wired
+- `src/projection/projectAltAz.ts` — needed real offset/zoom application
+- `src/terminal/input.ts` — key mappings already correct
+- `src/astronomy/objectTypes.ts` — type definitions
+- `src/projection/aspectCorrection.ts` — helper reference
+
+Files edited:
+- `src/projection/projectAltAz.ts` — applied `azimuthOffset` (wrapping angle) and `zoom` (scale around viewport center)
+- `tests/projection/projectAltAz.test.ts` — added 5 new tests covering offset shift, wrap, zoom spread/compress, center identity
+
+Quality gates:
+- `npx vitest run` — 121/121 passed (19 files)
+- `npx tsc --noEmit` — clean (no errors)

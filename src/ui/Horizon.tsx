@@ -2,21 +2,36 @@ import { Box, Text } from 'ink';
 
 type HorizonProps = {
   width: number;
+  azimuthOffset: number;
 };
 
-export function Horizon({ width }: HorizonProps) {
-  const markerCount = 4; // N E S W
-  const markerWidth = 1;
-  const spacesForDashes = width - markerCount * markerWidth - (markerCount - 1) * 1;
-  const segLen = Math.max(0, Math.floor(spacesForDashes / markerCount));
-  const dashes = (n: number) => '-'.repeat(n);
+const CARDINALS = [
+  { label: 'N', azimuth: 0 },
+  { label: 'E', azimuth: 90 },
+  { label: 'S', azimuth: 180 },
+  { label: 'W', azimuth: 270 },
+];
 
-  const compassLine = `N ${dashes(segLen)} E ${dashes(segLen)} S ${dashes(segLen)} W`;
+function normalizeAngle(deg: number): number {
+  return ((deg % 360) + 360) % 360;
+}
+
+export function Horizon({ width, azimuthOffset }: HorizonProps) {
+  const dashes = (n: number) => '-'.repeat(n);
+  const compass = Array.from({ length: Math.max(0, width) }, () => ' ');
+
+  for (const marker of CARDINALS) {
+    const adjusted = normalizeAngle(marker.azimuth - azimuthOffset);
+    const position = Math.floor((adjusted / 360) * width);
+    if (position >= 0 && position < compass.length) {
+      compass[position] = marker.label;
+    }
+  }
 
   return (
     <Box flexDirection="column">
       <Text>{dashes(width)}</Text>
-      <Text>{compassLine}</Text>
+      <Text>{compass.join('')}</Text>
     </Box>
   );
 }

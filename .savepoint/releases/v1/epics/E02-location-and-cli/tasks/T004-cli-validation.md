@@ -1,6 +1,6 @@
 ---
 id: E02-location-and-cli/T004-cli-validation
-status: planned
+status: done
 objective: Validate CLI inputs (lat/lon range, time format) with clear error messages
 depends_on: []
 complexity_tier: low
@@ -27,12 +27,27 @@ Only basic lat/lon pairing validation exists. Range validation and time format v
 
 ## Implementation Plan
 
-- [ ] Add lat/lon range checks after meow parsing
-- [ ] Add Date validity check for `--time`
-- [ ] Add fps and aspect range checks
-- [ ] Exit with code 1 and descriptive message on any violation
-- [ ] Write tests for cli validation (spawn process or unit test the validation function)
+- [x] Add lat/lon range checks after meow parsing
+- [x] Add Date validity check for `--time`
+- [x] Add fps and aspect range checks
+- [x] Exit with code 1 and descriptive message on any violation
+- [x] Write tests for cli validation (unit test the validation function)
 
 ## Context Log
 
-Pending.
+**Files read:** `src/cli.ts`
+
+**Files created:** `src/cli/validateFlags.ts`, `tests/cli/validateFlags.test.ts`
+
+**Files edited:** `src/cli.ts`
+
+**Quality gates:** `npx vitest run` — 17 files, 91 tests passed. `npx tsc --noEmit` — no errors.
+
+**Changes:**
+- Extracted `validateFlags()` into `src/cli/validateFlags.ts` for unit-testability
+- Added range checks: lat [-90,90], lon [-180,180], fps [1,60], aspect > 0
+- Added ISO 8601 validity check for `--time`
+- `cli.ts` calls `validateFlags()` and exits with code 1 + descriptive message on any violation
+- 17 test cases covering all valid/invalid scenarios
+
+**Drift notes:** Validation was extracted to its own module rather than kept inline in cli.ts, enabling direct unit testing without spawning processes.

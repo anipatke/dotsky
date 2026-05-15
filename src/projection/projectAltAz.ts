@@ -1,4 +1,13 @@
 // src/projection/projectAltAz.ts
+
+/**
+ * Altitude-azimuth projection module.
+ *
+ * Projection logic is isolated to allow future replacement with
+ * stereographic, orthographic, or azimuthal equidistant projections.
+ * Any projection must conform to the {@link ProjectionFunction} signature.
+ */
+
 import type { CelestialBody } from '../astronomy/objectTypes.js';
 import { applyAspectCorrection } from './aspectCorrection.js';
 
@@ -18,19 +27,42 @@ export type ProjectionConfig = {
   aspect: number;
 };
 
+export type ProjectionFunction = (
+  body: CelestialBody,
+  viewport: { width: number; height: number },
+  config: ProjectionConfig,
+) => ScreenPoint;
+
+function normalizeAngle(deg: number): number {
+  return ((deg % 360) + 360) % 360;
+}
+
 export function projectBody(
-  body: CelestialBody, 
-  viewport: { width: number, height: number }, 
-  config: ProjectionConfig
+  body: CelestialBody,
+  viewport: { width: number; height: number },
+  config: ProjectionConfig,
 ): ScreenPoint {
-  const visible = body.altitude >= 0;
-  
-  // Normalized projection mapping (0-360 to width, 0-90 to height)
-  // Simplified for minimum test passage
-  let x = Math.floor((body.azimuth / 360) * viewport.width);
-  let rawY = Math.floor((1 - (body.altitude / 90)) * viewport.height);
-  
-  let y = Math.floor(applyAspectCorrection(rawY, config.aspect));
+  const adjustedAzimuth = normalizeAngle(body.azimuth + config.azimuthOffset);
+
+  let nx = (adjustedAzimuth / 360) * viewport.width;
+  let ny = (1 - body.altitude / 90) * viewport.height;
+
+  const cx = viewport.width / 2;
+  const cy = viewport.height / 2;
+
+  nx = (nx - cx) * config.zoom + cx;
+  ny = (ny - cy) * config.zoom + cy;
+  ny = applyAspectCorrection(ny - cy, config.aspect) + cy;
+
+  const x = Math.floor(nx);
+  const y = Math.floor(ny);
+
+  const inBounds =
+    x >= 0 &&
+    x < viewport.width &&
+    y >= 0 &&
+    y < viewport.height;
+  const visible = body.altitude >= 0 && inBounds;
 
   return {
     id: body.id,
@@ -39,6 +71,6 @@ export function projectBody(
     x,
     y,
     visible,
-    magnitude: body.magnitude
+    magnitude: body.magnitude,
   };
 }

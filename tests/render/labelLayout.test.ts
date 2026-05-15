@@ -2,8 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { assignLabels } from '../../src/render/labelLayout';
 import type { ScreenPoint } from '../../src/projection/projectAltAz';
 
-function pt(name: string, x: number, y: number): ScreenPoint {
-  return { id: name, name, type: 'star', x, y, visible: true };
+function pt(name: string, x: number, y: number, type?: ScreenPoint['type']): ScreenPoint {
+  return { id: name, name, type: type ?? 'star', x, y, visible: true };
 }
 
 describe('assignLabels', () => {
@@ -30,5 +30,17 @@ describe('assignLabels', () => {
 
   it('returns empty array for empty input', () => {
     expect(assignLabels([], 80)).toHaveLength(0);
+  });
+
+  it('respects input priority order — first points get labels first', () => {
+    const points = [
+      pt('Venus', 0, 0, 'planet'),
+      pt('Moon', 3, 0, 'moon'),
+      pt('Sun', 6, 0, 'sun'),
+    ];
+    const result = assignLabels(points, 40);
+    expect(result[0].name).toBe('Venus');
+    expect(result[1].name).toBe('Moon');
+    expect(result[2].name).toBe('Sun');
   });
 });

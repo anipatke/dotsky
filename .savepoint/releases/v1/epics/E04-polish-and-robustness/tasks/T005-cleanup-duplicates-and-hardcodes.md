@@ -1,6 +1,6 @@
 ---
 id: E04-polish-and-robustness/T005-cleanup-duplicates-and-hardcodes
-status: planned
+status: done
 objective: Remove duplicate Viewport.tsx, clean up hardcoded dimensions and stale references
 depends_on: []
 complexity_tier: low
@@ -37,4 +37,11 @@ Two Viewport files exist (`src/Viewport.tsx` and `src/ui/Viewport.tsx`). Several
 
 ## Context Log
 
-Pending.
+Files read: src/App.tsx, src/ui/Header.tsx, src/ui/Footer.tsx, src/ui/Horizon.tsx, src/ui/Viewport.tsx
+Files edited: src/App.tsx (import from constants.js, removed inline MIN_WIDTH/MIN_HEIGHT), src/ui/Footer.tsx (import constants.js, dynamic display string)
+Files created: src/constants.ts (MIN_WIDTH=80, MIN_HEIGHT=24)
+Files verified deleted: src/Viewport.tsx (already gone, no stale imports remain)
+
+Quality gates:
+- `npx tsc --noEmit`: passes
+- `npx vitest run`: 20 files, 156 tests passed

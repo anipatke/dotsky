@@ -1,3 +1,5 @@
+import { MIN_HEIGHT, MIN_WIDTH } from '../constants.js';
+
 type ResizeDimensions = { width: number; height: number };
 type ResizeCallback = (dim: ResizeDimensions) => void;
 
@@ -9,8 +11,8 @@ function handleResize(): void {
   if (debounceTimer) clearTimeout(debounceTimer);
   debounceTimer = setTimeout(() => {
     const dim = {
-      width: process.stdout.columns ?? 80,
-      height: process.stdout.rows ?? 24,
+      width: process.stdout.columns ?? MIN_WIDTH,
+      height: process.stdout.rows ?? MIN_HEIGHT,
     };
     listeners.forEach(cb => cb(dim));
   }, 16);

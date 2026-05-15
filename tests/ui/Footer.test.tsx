@@ -37,4 +37,15 @@ describe('Footer', () => {
     const out = await renderToString(createElement(Footer));
     expect(out).toContain('[+/-] zoom');
   });
+
+  it('renders fallback warning when locationSource is fallback', async () => {
+    const out = await renderToString(createElement(Footer, { locationSource: 'fallback' }));
+    expect(out).toContain('[Location fallback:');
+    expect(out).toContain('Sydney]');
+  });
+
+  it('does not render fallback warning when locationSource is geo', async () => {
+    const out = await renderToString(createElement(Footer, { locationSource: 'geo' }));
+    expect(out).not.toContain('[Location fallback:');
+  });
 });
