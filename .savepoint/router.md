@@ -15,11 +15,11 @@ Read `.savepoint/PRD.md` only for vision changes. Read `.savepoint/Design.md` on
 ## Current state
 
 ```yaml
-state: pre-implementation
-release: v1
-epic:
-task:
-next_action: Review v1 release status and decide release handoff.
+state: task-building
+release: v1.1
+epic: E01
+task: E01-test-suite-integrity/T001-remove-global-resize-teardown
+next_action: Await approval to build v1.1 E01/T001 (remove global resize-listener teardown).
 ```
 
 ## Skill Activation

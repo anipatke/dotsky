@@ -43,7 +43,7 @@
     "ink": "^7.0.1",
     "meow": "^14.1.0",
     "react": "^19.2.5",
-    "savepoint": "^1.2.6"
+    "savepoint": "^1.2.16"
   },
   "devDependencies": {
     "@types/node": "^25.6.0",

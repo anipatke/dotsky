@@ -16,7 +16,7 @@ Ship a full-screen terminal planetarium that renders the live night sky from any
 |---|------|--------|
 | E01 | astronomy-engine | audited |
 | E02 | location-and-cli | audited |
-| E03 | tui-core | planned |
+| E03 | tui-core | audited |
 | E04 | polish-and-robustness | audited |
 
 ## Epic summaries
