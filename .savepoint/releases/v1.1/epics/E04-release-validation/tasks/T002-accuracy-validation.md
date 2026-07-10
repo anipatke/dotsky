@@ -1,8 +1,8 @@
 ---
 id: E04-release-validation/T002-accuracy-validation
 status: planned
-objective: Verify rendered sky positions against Stellarium for at least three bodies
-depends_on: []
+objective: Establish documented reference comparisons and repeatable astronomy regression fixtures
+depends_on: ["E03-render-loop-efficiency/T002-isolate-unchanged-viewport", "E03-render-loop-efficiency/T003-label-collision-layout"]
 complexity_tier: low
 complexity_reason: Known procedure from the v1 plan's Phase 3 validation strategy; comparison and write-up only.
 ---
@@ -21,16 +21,18 @@ PRD §18 requires "accurate celestial positioning" but nothing has ever compared
 
 ## Acceptance Criteria
 
-- [ ] Alt/az of the Sun, the Moon, and at least one planet and one bright star compared against Stellarium for the same instant and observer (suggest Sydney, a fixed ISO time via `--time` — requires E02/T001)
-- [ ] Agreement within ~1° alt/az for solar-system bodies; star positions sanity-checked (catalog uses fixed ICRS coords, so arc-minute drift is acceptable)
-- [ ] Results recorded in `.savepoint/releases/v1.1/validation.md` with the exact time, location, and numbers
+- [ ] Cases cover Sun, Moon, at least one planet, and one bright star across Sydney, one northern-hemisphere location, and a near-horizon body
+- [ ] Each case records UTC instant, observer coordinates/elevation, refraction and apparent/geometric-coordinate settings, reference tool/version, astronomy-engine version, expected values, actual values, and tolerance
+- [ ] Agreement within the documented tolerance (initial target ~1° alt/az for solar-system bodies); star positions account explicitly for fixed-catalog epoch limitations
+- [ ] Validated values become automated regression fixtures with tolerances, not only a one-time manual table
+- [ ] Results and assumptions are recorded in `.savepoint/releases/v1.1/validation.md`
 - [ ] Any body off by more than tolerance filed as a defect via `savepoint-create-defect`, not silently fixed
 
 ## Implementation Plan
 
-- [ ] Write a small comparison script (scratch, not shipped) printing alt/az from `calculateSolarSystemBodies`/`calculateStarPositions` for a fixed instant
-- [ ] Read the same values from Stellarium (or an equivalent authoritative ephemeris source)
-- [ ] Record the table and verdict in `validation.md`
+- [ ] Write a scratch comparison script printing alt/az for fixed instants and locations
+- [ ] Compare with Stellarium or an equivalent authoritative ephemeris using matched coordinate/refraction settings
+- [ ] Record the table and verdict, then add stable fixtures to the astronomy tests
 
 ## Context Log
 

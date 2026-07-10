@@ -1,8 +1,8 @@
 ---
 id: E03-render-loop-efficiency/T003-label-collision-layout
 status: planned
-objective: Width-aware label collision avoidance with right-edge clamping and explicit §12 priority
-depends_on: []
+objective: Deterministic viewport-safe label placement that reserves labels and celestial symbols
+depends_on: ["E02-conformance-defects/T004-star-priority-alignment"]
 complexity_tier: medium
 complexity_reason: Algorithm change in labelLayout with real geometry cases; isolated module but needs careful test coverage.
 ---
@@ -22,17 +22,19 @@ complexity_reason: Algorithm change in labelLayout with real geometry cases; iso
 
 ## Acceptance Criteria
 
-- [ ] A label reserves its full text extent (`labelX .. labelX + name.length`) on its row; overlapping candidates are skipped or placed on the other side of the point
+- [ ] A label reserves its full text extent and every celestial symbol cell is treated as occupied
 - [ ] Labels are clamped so no character exceeds `viewportWidth - 1`
 - [ ] Assignment order is an explicit §12 priority sort inside `assignLabels`, independent of input order
+- [ ] Equal-priority bodies use magnitude then stable body ID as deterministic tie-breakers
+- [ ] Placement tries right, left, above, and below when safe before dropping a label
 - [ ] `maxLabels = floor(width / 12)` cap unchanged
 - [ ] Unit tests cover: adjacent bodies, right-edge body, priority contention when the cap is hit
 
 ## Implementation Plan
 
-- [ ] Track occupancy as per-row column intervals instead of a single-cell set
-- [ ] Add left-side fallback placement (`x - name.length - 1`) when the right side collides or clips
-- [ ] Sort candidates by §12 priority before assignment
+- [ ] Track symbol cells and label occupancy as per-row column intervals
+- [ ] Add deterministic right/left/above/below candidate placement with viewport bounds checks
+- [ ] Sort candidates by §12 priority, magnitude, then ID
 - [ ] Extend `tests/render/labelLayout.test.ts` with the geometry cases above
 
 ## Context Log

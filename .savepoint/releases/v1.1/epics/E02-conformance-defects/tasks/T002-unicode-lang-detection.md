@@ -2,7 +2,7 @@
 id: E02-conformance-defects/T002-unicode-lang-detection
 status: planned
 objective: Detect UTF-8 support via LANG so standard Linux terminals get Unicode symbols
-depends_on: []
+depends_on: ["E01-test-suite-integrity/T002-test-isolation-and-green-suite"]
 complexity_tier: low
 complexity_reason: One function in asciiGrid.ts plus unit tests; no cross-module impact.
 ---
@@ -20,15 +20,15 @@ complexity_reason: One function in asciiGrid.ts plus unit tests; no cross-module
 
 ## Acceptance Criteria
 
-- [ ] Precedence: `LC_ALL` → `LC_CTYPE` → `LANG`, matching POSIX locale resolution; `TERM` only as a last resort
+- [ ] Precedence: `LC_ALL` → `LC_CTYPE` → `LANG`, matching POSIX locale resolution; `TERM` is not treated as an encoding declaration
 - [ ] `LANG=C.UTF-8` (nothing else set) → Unicode enabled
 - [ ] `LC_ALL=C` overrides a UTF-8 `LANG` → ASCII mode
-- [ ] Existing fallback behavior when nothing indicates UTF-8 is unchanged
+- [ ] With no locale declaration, use a documented platform-aware default rather than inferring encoding from `TERM=xterm-256color`
 - [ ] Unit tests cover each precedence branch
 
 ## Implementation Plan
 
-- [ ] Insert `LANG` into the checked-variable chain in `detectUnicodeSupport()`
+- [ ] Resolve the effective locale from `LC_ALL`, `LC_CTYPE`, then `LANG`; keep detection as a pure, directly testable function
 - [ ] Add table-driven unit tests stubbing `process.env` for the precedence cases
 - [ ] Verify live: `LANG=C.UTF-8 npm run dev -- --no-geo` renders `☉`/`◐`
 

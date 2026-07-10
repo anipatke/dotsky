@@ -2,7 +2,7 @@
 id: E02-conformance-defects/T001-time-flag-manual-mode
 status: planned
 objective: Make --time actually control the observation time by starting in manual mode
-depends_on: []
+depends_on: ["E01-test-suite-integrity/T002-test-isolation-and-green-suite"]
 complexity_tier: medium
 complexity_reason: Small code change but a product-behavior decision (mode semantics) spanning cli.ts, App.tsx, and tests.
 ---
@@ -31,10 +31,9 @@ complexity_reason: Small code change but a product-behavior decision (mode seman
 
 ## Implementation Plan
 
-- [ ] Add `initialMode` (or derive from `initialTime !== undefined`) to `AppProps` and seed `AppState.mode` from it
-- [ ] Set manual mode in `cli.ts` when the `time` flag is present
-- [ ] Ensure `reset` (`r`) returns to live/system time rather than the stale flag time (PRD §14 "Reset")
-- [ ] Add/adjust tests: paused start, no drift over >1 s, step from flag time, plain launch still live
+- [ ] Derive initial mode from `initialTime !== undefined`; do not add a second prop that can contradict `initialTime`
+- [ ] Ensure `reset` (`r`) sets mode to live and replaces the time with `new Date()` in the same state update, as well as resetting view and labels
+- [ ] Add/adjust fake-timer tests: paused start, no drift over >1 s, step from flag time, reset snaps immediately to system time, plain launch still live
 - [ ] Verify with a real run: `npm run dev -- --time="2024-06-15T22:00:00+10:00" --no-geo`
 
 ## Context Log

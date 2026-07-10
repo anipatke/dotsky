@@ -1,7 +1,7 @@
 ---
 id: E01-test-suite-integrity/T002-test-isolation-and-green-suite
 status: planned
-objective: Make all 175 tests pass deterministically in a single full vitest run
+objective: Make every discovered test pass deterministically without leaking application resources
 depends_on: ["E01-test-suite-integrity/T001-remove-global-resize-teardown"]
 complexity_tier: medium
 complexity_reason: Touches several test files plus module-state design in asciiGrid; ordering bugs need repeated-run verification.
@@ -23,15 +23,17 @@ Three tests fail in the full suite but pass in isolation. Beyond the T001 root c
 
 ## Acceptance Criteria
 
-- [ ] `npx vitest run` passes 175/175, three consecutive runs
+- [ ] `npx vitest run` passes every discovered test, three consecutive runs
 - [ ] Every `render(<App .../>)` in the test suite has a corresponding `unmount()` (afterEach or inline)
 - [ ] Unicode support is resolved per `App` instance (prop with env-based default, or lazy evaluation) instead of a module-load constant
 - [ ] `npm test` (the `prepublishOnly` gate) exits 0
+- [ ] App tests leave no pending intervals, resize listeners, or accumulated process handlers
 
 ## Implementation Plan
 
 - [ ] Replace the module-level `unicodeSupported` constant with a prop defaulting to `detectUnicodeSupport()` at mount, keeping CLI behavior identical
-- [ ] Add `afterEach` unmount handling in `tests/App.test.tsx` and both integration test files
+- [ ] Introduce one shared App-render cleanup pattern and apply it to every test file found by searching for `render(<App` rather than maintaining a fixed file list
+- [ ] Use fake timers for clock/interval assertions so the suite does not depend on wall-clock sleeps
 - [ ] Re-run the previously failing trio in-suite; then the full suite three times
 - [ ] Confirm `npm test && npm run build` (the publish gate) succeeds end-to-end
 

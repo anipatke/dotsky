@@ -26,11 +26,13 @@ complexity_reason: Deleting one redundant effect in App.tsx; the onResize cleanu
 - [ ] `removeAllResizeListeners()` remains exported and still called from the `process.on('exit')` path in `cli.ts`
 - [ ] `tests/App.test.tsx` resize tests pass in the full-suite run, not just isolation
 - [ ] No change to resize behavior of a single running app (debounce, dimensions)
+- [ ] Unsubscribing is idempotent and leaves no stdout resize handler after the final subscriber leaves
 
 ## Implementation Plan
 
 - [ ] Delete the unmount effect at `App.tsx:92-96`
 - [ ] Add a unit test in `tests/terminal/resize.test.ts`: two subscribers, unsubscribe one, emit resize, assert the other still fires
+- [ ] Assert the final unsubscribe detaches the shared stdout handler and repeated cleanup is harmless
 - [ ] Run the full suite and confirm the two resize tests in `tests/App.test.tsx` now pass in-suite
 
 ## Context Log

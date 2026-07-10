@@ -7,7 +7,7 @@ status: planned
 
 ## Purpose
 
-Fix the five behavioral deviations from the PRD confirmed by running the built app during the 2026-07-04 review.
+Fix the behavioral deviations from the PRD confirmed by running and reviewing the built app during the 2026-07-04 and 2026-07-10 reviews.
 
 ## What this epic adds
 
@@ -15,7 +15,8 @@ Fix the five behavioral deviations from the PRD confirmed by running the built a
 - Unicode symbols (`☉`, `◐`) render on standard Linux terminals (`LANG=C.UTF-8`, `TERM=xterm-256color`) — detection currently skips `LANG` entirely
 - Terminals below 80x24 show a single warning line instead of a clamped 80-column sky that wraps and corrupts the display
 - Star density priority matches PRD §10 (Sun > Moon > Planets > bright > dim) — currently inverted (`planet: 0, moon: 1, sun: 2`)
-- SIGTERM unmounts the Ink tree before exiting so the alternate screen buffer and cursor are restored
+- `q`, Ctrl+C/SIGINT, and SIGTERM converge on one idempotent teardown path so the alternate screen buffer and cursor are restored
+- Astronomy failures are caught at the App boundary and shown as a stable error state that can still exit cleanly
 - Dead `src/terminal/screen.ts` removed (Ink owns the screen lifecycle per the `cli.ts` comment)
 
 ## Components and files
@@ -28,7 +29,7 @@ Fix the five behavioral deviations from the PRD confirmed by running the built a
 | `src/render/starDensity.ts` | Priority order per PRD §10 |
 | `src/ui/Footer.tsx` | Warning moves out of footer for the below-minimum case |
 | `src/terminal/screen.ts` | Delete |
-| `prd.md` | Amend §10 if the planets-first decision is taken |
+| `src/astronomy/skyModel.ts` | Unchanged calculation boundary exercised by App failure tests |
 
 ## Architectural delta
 
@@ -36,7 +37,7 @@ Fix the five behavioral deviations from the PRD confirmed by running the built a
 
 ## Boundaries
 
-**In scope:** the five defects above plus dead-code removal.
+**In scope:** the confirmed conformance defects above, unified shutdown, astronomy error containment, and dead-code removal.
 
 **Out of scope:** render loop timing (E03), label layout (E03), packaging (E04).
 
@@ -50,4 +51,4 @@ Fix the five behavioral deviations from the PRD confirmed by running the built a
 
 ## Open decisions
 
-- Star priority: PRD §10 says Sun > Moon > Planets; the code ships planets-first, which is arguably better at night when the Sun is below the horizon anyway. Decide: flip the code to match the PRD, or keep planets-first and amend PRD §10. T004 defaults to following the PRD unless the owner overrides; either way code and spec must agree afterward.
+None. Density priority follows PRD §10: Sun > Moon > Planets > bright stars > dim stars.

@@ -1,10 +1,10 @@
 ---
 id: E02-conformance-defects/T004-star-priority-alignment
 status: planned
-objective: Make star-density priority in code and PRD §10 agree
-depends_on: []
+objective: Make star-density priority follow PRD §10 and keep visible solar-system bodies ahead of stars
+depends_on: ["E01-test-suite-integrity/T002-test-isolation-and-green-suite"]
 complexity_tier: low
-complexity_reason: One constant in starDensity.ts or one PRD paragraph, plus test updates; decision is recorded in the epic.
+complexity_reason: One priority constant plus explicit constrained-density regression tests; the product order is already decided.
 ---
 
 # T004: Align star-density priority with PRD §10
@@ -21,14 +21,13 @@ PRD §10 orders density priority Sun > Moon > Planets > bright stars > dim stars
 
 ## Acceptance Criteria
 
-- [ ] Code priority order and PRD §10 are identical (whichever direction the open decision in `E02-Detail.md` resolves)
-- [ ] If the PRD is amended, §10 documents the rationale (planets-first favors what's actually interesting in a night sky; the Sun is below the horizon at night anyway)
+- [ ] Code priority is Sun > Moon > Planets > bright stars > dim stars, matching PRD §10
 - [ ] `tests/render/starDensity.test.ts` asserts the agreed order explicitly by name (sun/moon/planet), not just by count
+- [ ] Under a constrained density limit, a star never displaces a visible Sun, Moon, or planet
 
 ## Implementation Plan
 
-- [ ] Resolve the open decision with the owner (default: follow PRD §10 — sun, moon, planets)
-- [ ] Apply the chosen side: flip the `PRIORITY` map or amend PRD §10
+- [ ] Flip the `PRIORITY` map to follow PRD §10
 - [ ] Update/extend the density unit tests to lock in the order
 
 ## Context Log

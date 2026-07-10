@@ -1,8 +1,8 @@
 ---
 id: E03-render-loop-efficiency/T001-decouple-ephemeris-from-render
 status: planned
-objective: Compute celestial positions at 1 Hz and only re-project when inputs change, per PRD §9
-depends_on: []
+objective: Replace the fps timer with event-driven sky derivation keyed to actual inputs
+depends_on: ["E02-conformance-defects/T001-time-flag-manual-mode", "E02-conformance-defects/T003-small-terminal-guard", "E02-conformance-defects/T006-astronomy-error-boundary"]
 complexity_tier: high
 complexity_reason: Restructures the App.tsx state/effect pipeline with regression risk across time modes, resize, and controls.
 ---
@@ -23,18 +23,21 @@ PRD §9: "Live mode updates celestial positions once per second. Render loop cap
 
 ## Acceptance Criteria
 
-- [ ] `calculateCelestialBodies` runs at most ~1 Hz in steady-state live mode (asserted by a spy-based test over a multi-second window)
+- [ ] The first sky frame is derived immediately rather than waiting for the first interval
+- [ ] `calculateCelestialBodies` runs once initially and at most once per 1 Hz live clock tick, asserted with fake timers
 - [ ] Projection/density/labels recompute when and only when `time`, `azimuthOffset`, `zoom`, `dimensions`, or `aspect` change
 - [ ] Rotation, zoom, resize, and time-stepping still update the view immediately (their input changes trigger recompute without waiting for the 1 Hz tick)
 - [ ] Manual mode computes once per time change, not continuously
+- [ ] No fps/paint interval remains; `--fps` stays accepted for v1.1 compatibility and is documented as deprecated
 - [ ] Full suite green
 
 ## Implementation Plan
 
-- [ ] Move `calculateCelestialBodies` out of the fps interval into a memo keyed on `(time, lat, lon)` — the 1 Hz live tick already updates `time`, giving §9's cadence for free
+- [ ] Move `calculateCelestialBodies` out of the fps interval into a memo keyed on `(time, lat, lon)` — the 1 Hz live tick already supplies the cadence
 - [ ] Derive projected/density-limited/labeled points via `useMemo` on `(bodies, azimuthOffset, zoom, dimensions, aspect)` instead of `setScreenPoints`/`setLabeledPoints` state
-- [ ] Retire the fps interval or reduce it to a paint-throttle if profiling shows Ink needs one
-- [ ] Add the call-rate spy test; run the full suite; manual smoke of all keybindings
+- [ ] Retire the fps interval; do not add a signature or throttle unless profiling demonstrates a measured problem
+- [ ] Update README/PRD CLI and rendering notes to deprecate `--fps` while retaining parsing compatibility
+- [ ] Add fake-timer call-rate and immediate-first-frame tests; run the full suite; manually smoke all keybindings
 
 ## Context Log
 

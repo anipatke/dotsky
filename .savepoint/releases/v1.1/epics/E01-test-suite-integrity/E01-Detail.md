@@ -14,7 +14,7 @@ Make the full test suite pass deterministically regardless of test order, restor
 - `App.tsx` no longer destroys other instances' resize listeners on unmount
 - Tests unmount their rendered Ink instances so module-level state cannot leak between tests
 - Unicode support detection is evaluated per app instance instead of frozen at module load
-- 175/175 tests green in a single full `vitest run`
+- Every discovered test passes without leaked App timers, resize listeners, or process handlers
 
 ## Components and files
 
@@ -43,9 +43,10 @@ None to product behavior. The only semantic change is that unmounting one `App` 
 
 ## Quality gates
 
-- `npx vitest run` — all 23 files pass in one run, repeated 3 times to confirm determinism
+- `npx vitest run` — every discovered test passes, repeated 3 times to confirm determinism
 - `npx tsc --noEmit` passes
 - `npm pack --dry-run` no longer blocked by the test gate
+- App tests leave no live timers, resize listeners, or process handlers after cleanup
 
 ## Open decisions
 
